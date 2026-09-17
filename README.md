@@ -4,6 +4,22 @@ Doc AI Assistant is a local PDF question-answering prototype. It lets you upload
 
 The project is intended as a practical RAG (retrieval-augmented generation) demonstration, not as a production document-management system.
 
+## Screenshots
+
+The following screenshots were captured from the live FastAPI application using a safe, temporary demo PDF. The demo PDF is not committed to the repository.
+
+![Main interface](docs/images/main-interface.png)
+
+_Main interface with PDF upload and question controls._
+
+![Document and question workflow](docs/images/document-question-workflow.png)
+
+_Document uploaded and question ready to submit._
+
+![Example answer and result](docs/images/example-answer-result.png)
+
+_Example answer with source pages returned by the application._
+
 ## Overview
 
 Long PDFs can be difficult to search when the information you need is spread across many pages. Doc AI Assistant addresses this by turning a document into searchable chunks and using those chunks as context for a language model.
@@ -45,6 +61,10 @@ PDF
 
 The embedding and vector index exist only in process memory. They are rebuilt for each upload session and are not persisted after the application restarts.
 
+![Doc AI Assistant architecture](docs/doc-ai-assistant-architecture.svg)
+
+_The diagram follows the FastAPI web path in `app.py` and `rag_engine.py`. `main.py` is a separate console implementation with its own chunking and tokenization behavior._
+
 The repository also contains `main.py`, a separate console implementation with its own chunking and tokenization behavior. It is not the same execution path as the FastAPI web application.
 
 ## Technology Stack
@@ -72,28 +92,29 @@ doc_ai_assistant/
 ├── main.py                 Separate console RAG implementation
 ├── rag_engine.py           Reusable PDF/RAG engine and console mode
 ├── templates/index.html    Web interface and browser JavaScript
+├── docs/
+│   ├── doc-ai-assistant-architecture.svg
+│   └── images/
+│       ├── main-interface.png
+│       ├── document-question-workflow.png
+│       └── example-answer-result.png
+├── requirements.txt        Direct runtime Python dependencies
 ├── start_ai.bat            Windows Uvicorn launcher
 ├── .gitignore              Ignores environments, uploads, PDFs, caches, and logs
 └── .venv/                  Local virtual environment (not committed)
 ```
 
-`uploads/` is created at runtime for uploaded documents and is ignored by Git. The repository does not include a `requirements.txt`, test suite, or license file.
+`uploads/` is created at runtime for uploaded documents and is ignored by Git. The repository includes a direct-dependency manifest in `requirements.txt`, but it does not include a test suite or license file.
 
 ## Requirements
 
-There is currently no dependency manifest in the repository, so the package versions are not pinned for a fresh clone. The existing local environment uses Python 3.14.4 and the following runtime packages:
+Install the direct runtime dependencies:
 
-- `fastapi`
-- `uvicorn`
-- `pydantic`
-- `python-multipart`
-- `pypdf`
-- `sentence-transformers`
-- `faiss-cpu`
-- `numpy`
-- `ollama`
+```powershell
+python -m pip install -r requirements.txt
+```
 
-A fresh environment may also need the model runtime dependencies installed by `sentence-transformers`, and it may need network access to download the embedding model on first use.
+`requirements.txt` lists the packages imported by the application or required to launch it. Transitive dependencies are resolved by pip. A fresh environment may also need network access to download the embedding model on first use.
 
 Ollama must be installed separately. The application expects the model to be available locally as:
 
@@ -118,14 +139,9 @@ python -m venv .venv
 
 ### 2. Install the runtime packages
 
-Because no requirements file is checked in, install the packages used by the source:
-
 ```powershell
-python -m pip install --upgrade pip
-python -m pip install fastapi uvicorn pydantic python-multipart pypdf sentence-transformers faiss-cpu numpy ollama
+python -m pip install -r requirements.txt
 ```
-
-For reproducible installation in the future, add a reviewed and pinned `requirements.txt` or equivalent dependency manifest.
 
 ### 3. Install and start Ollama
 
@@ -207,12 +223,12 @@ Treat this as a local prototype and do not expose it publicly without additional
 - Source pages are shown, but quoted passages and automatic claim-level verification are not implemented.
 - The two console implementations do not have identical chunking, tokenization, or prompt behavior.
 - There is no automated test suite, CI configuration, lint configuration, or type-check configuration.
-- The project has no pinned dependency manifest, so installation is not fully reproducible from the repository alone.
+- The project pins direct runtime dependencies in `requirements.txt`, but it does not include a lockfile for every transitive dependency.
 - The web server is a development-style FastAPI service and is not hardened for multi-user or internet deployment.
 
 ## Future Improvements
 
-- Add a reviewed, pinned `requirements.txt` or `pyproject.toml`.
+- Add a lockfile or container definition for reproducible transitive dependency versions.
 - Add OCR support for scanned PDFs.
 - Add upload validation, filename sanitization, size limits, authentication, and TLS.
 - Persist indexes and session state in a database or object store.

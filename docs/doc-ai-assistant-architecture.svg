@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="980" viewBox="0 0 1200 980" role="img" aria-labelledby="title desc">
+  <title id="title">Doc AI Assistant architecture</title>
+  <desc id="desc">Verified web application pipeline from PDF upload through hybrid retrieval and local Ollama answer generation.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#334155"/>
+    </marker>
+    <style>
+      .title { font: 700 28px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 15px Arial, sans-serif; fill: #475569; }
+      .box { fill: #f8fafc; stroke: #64748b; stroke-width: 2; }
+      .box-strong { fill: #e0f2fe; stroke: #0369a1; stroke-width: 2; }
+      .box-answer { fill: #dcfce7; stroke: #15803d; stroke-width: 2; }
+      .label { font: 700 15px Arial, sans-serif; fill: #0f172a; }
+      .detail { font: 400 13px Arial, sans-serif; fill: #334155; }
+      .note { font: 400 14px Arial, sans-serif; fill: #475569; }
+      .arrow { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="980" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="title">Doc AI Assistant: verified web pipeline</text>
+  <text x="600" y="68" text-anchor="middle" class="subtitle">app.py + rag_engine.py; main.py is a separate console implementation</text>
+
+  <g>
+    <rect x="50" y="110" width="190" height="82" rx="12" class="box"/>
+    <text x="145" y="142" text-anchor="middle" class="label">Browser UI</text>
+    <text x="145" y="166" text-anchor="middle" class="detail">HTML, CSS, JavaScript</text>
+
+    <rect x="290" y="110" width="210" height="82" rx="12" class="box"/>
+    <text x="395" y="142" text-anchor="middle" class="label">FastAPI app.py</text>
+    <text x="395" y="166" text-anchor="middle" class="detail">POST /upload and /ask</text>
+
+    <rect x="550" y="110" width="210" height="82" rx="12" class="box"/>
+    <text x="655" y="142" text-anchor="middle" class="label">Browser session</text>
+    <text x="655" y="166" text-anchor="middle" class="detail">HttpOnly cookie + in-memory engine</text>
+
+    <rect x="810" y="110" width="190" height="82" rx="12" class="box"/>
+    <text x="905" y="142" text-anchor="middle" class="label">Uploaded PDF</text>
+    <text x="905" y="166" text-anchor="middle" class="detail">Text-based document</text>
+  </g>
+
+  <path d="M240 151 H290" class="arrow"/>
+  <path d="M500 151 H550" class="arrow"/>
+  <path d="M760 151 H810" class="arrow"/>
+
+  <g>
+    <rect x="350" y="265" width="250" height="82" rx="12" class="box"/>
+    <text x="475" y="297" text-anchor="middle" class="label">pypdf extraction</text>
+    <text x="475" y="321" text-anchor="middle" class="detail">page.extract_text()</text>
+
+    <rect x="350" y="405" width="250" height="92" rx="12" class="box"/>
+    <text x="475" y="437" text-anchor="middle" class="label">create_chunks()</text>
+    <text x="475" y="461" text-anchor="middle" class="detail">paragraph-aware, 800-character limit</text>
+    <text x="475" y="481" text-anchor="middle" class="detail">page number retained</text>
+  </g>
+
+  <path d="M905 192 C905 225 475 225 475 265" class="arrow"/>
+  <path d="M475 347 V405" class="arrow"/>
+
+  <g>
+    <rect x="75" y="575" width="270" height="92" rx="12" class="box"/>
+    <text x="210" y="607" text-anchor="middle" class="label">Keyword retrieval</text>
+    <text x="210" y="631" text-anchor="middle" class="detail">Counter token index</text>
+    <text x="210" y="651" text-anchor="middle" class="detail">exact-match scoring</text>
+
+    <rect x="405" y="575" width="270" height="92" rx="12" class="box"/>
+    <text x="540" y="607" text-anchor="middle" class="label">Sentence embeddings</text>
+    <text x="540" y="631" text-anchor="middle" class="detail">paraphrase-multilingual-MiniLM-L12-v2</text>
+    <text x="540" y="651" text-anchor="middle" class="detail">encoded for each chunk</text>
+
+    <rect x="735" y="575" width="270" height="92" rx="12" class="box-strong"/>
+    <text x="870" y="607" text-anchor="middle" class="label">FAISS IndexFlatL2</text>
+    <text x="870" y="631" text-anchor="middle" class="detail">in-memory semantic search</text>
+    <text x="870" y="651" text-anchor="middle" class="detail">top 8 semantic results</text>
+  </g>
+
+  <path d="M475 497 C475 535 210 535 210 575" class="arrow"/>
+  <path d="M540 497 V575" class="arrow"/>
+  <path d="M605 497 C605 535 870 535 870 575" class="arrow"/>
+
+  <g>
+    <rect x="405" y="715" width="270" height="88" rx="12" class="box-strong"/>
+    <text x="540" y="747" text-anchor="middle" class="label">Hybrid rank fusion</text>
+    <text x="540" y="771" text-anchor="middle" class="detail">semantic + keyword results</text>
+    <text x="540" y="791" text-anchor="middle" class="detail">top 6 chunks with page metadata</text>
+
+    <rect x="735" y="715" width="270" height="88" rx="12" class="box"/>
+    <text x="870" y="747" text-anchor="middle" class="label">Context prompt</text>
+    <text x="870" y="771" text-anchor="middle" class="detail">[Page N] passages only</text>
+  </g>
+
+  <path d="M210 667 C210 690 405 690 405 715" class="arrow"/>
+  <path d="M540 667 V715" class="arrow"/>
+  <path d="M870 667 C870 690 675 690 675 715" class="arrow"/>
+  <path d="M870 803 C870 815 540 815 540 825" class="arrow"/>
+
+  <g>
+    <rect x="405" y="825" width="270" height="88" rx="12" class="box"/>
+    <text x="540" y="857" text-anchor="middle" class="label">Ollama qwen3:4b</text>
+    <text x="540" y="881" text-anchor="middle" class="detail">local chat request</text>
+
+    <rect x="735" y="825" width="270" height="88" rx="12" class="box-answer"/>
+    <text x="870" y="857" text-anchor="middle" class="label">Answer + source pages</text>
+    <text x="870" y="881" text-anchor="middle" class="detail">returned to the browser</text>
+  </g>
+
+  <path d="M675 869 H735" class="arrow"/>
+  <text x="600" y="950" text-anchor="middle" class="note">Embeddings, FAISS indexes, and browser session state are rebuilt per upload and remain in process memory.</text>
+</svg>
