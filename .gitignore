@@ -1,0 +1,66 @@
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python artifacts
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local databases and generated vector/index/cache data
+*.db
+*.sqlite
+*.sqlite3
+*.duckdb
+*.faiss
+*.pkl
+*.pickle
+*.joblib
+*.parquet
+*.npy
+*.npz
+/local/
+/local_data/
+/vector/
+/vectors/
+/index/
+/indexes/
+/cache/
+/caches/
+**/local/
+**/local_data/
+**/vector/
+**/vectors/
+**/index/
+**/indexes/
+**/cache/
+**/caches/
+
+# Uploaded and private documents
+uploads/
+*.pdf
+*.PDF
+
+# Logs and temporary files
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+*.orig
+*~
+.DS_Store
+Thumbs.db
+
+# Local tool state
+.kilo/

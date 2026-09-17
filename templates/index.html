@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Document AI Assistant
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f5f5f5;
+
+            color: #222;
+        }
+
+
+        .container {
+
+            width: 92%;
+
+            max-width: 1000px;
+
+            margin: 30px auto;
+        }
+
+
+        h1 {
+
+            margin-bottom: 8px;
+        }
+
+
+        .subtitle {
+
+            color: #666;
+
+            margin-bottom: 25px;
+        }
+
+
+        .card {
+
+            background: white;
+
+            padding: 22px;
+
+            margin-bottom: 20px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        .step-title {
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            margin-bottom: 15px;
+        }
+
+
+        input[type="file"] {
+
+            width: 100%;
+
+            padding: 10px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            background: white;
+        }
+
+
+        textarea {
+
+            width: 100%;
+
+            min-height: 120px;
+
+            padding: 15px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            resize: vertical;
+        }
+
+
+        button {
+
+            margin-top: 12px;
+
+            padding: 12px 24px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #333;
+
+            color: white;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+
+        button:hover {
+
+            background: #555;
+        }
+
+
+        button:disabled {
+
+            background: #999;
+
+            cursor: not-allowed;
+        }
+
+
+        .document-status {
+
+            margin-top: 15px;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            background: #f0f0f0;
+
+            color: #555;
+        }
+
+
+        .answer-box {
+
+            margin-top: 20px;
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        .answer {
+
+            white-space: pre-wrap;
+
+            line-height: 1.7;
+        }
+
+
+        .sources {
+
+            margin-top: 25px;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #ddd;
+
+            color: #666;
+        }
+
+
+        .loading {
+
+            display: none;
+
+            margin-top: 15px;
+
+            color: #666;
+        }
+
+
+        .error {
+
+            color: #b00020;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .container {
+
+                width: 94%;
+
+                margin: 20px auto;
+            }
+
+
+            h1 {
+
+                font-size: 25px;
+            }
+
+
+            .card {
+
+                padding: 18px;
+            }
+
+
+            button {
+
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <h1>
+        Document AI Assistant
+    </h1>
+
+
+    <div class="subtitle">
+
+        Upload a PDF and ask questions about it.
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- Upload -->
+    <!-- ================================================== -->
+
+    <div class="card">
+
+        <div class="step-title">
+
+            1. Upload your PDF
+
+        </div>
+
+
+        <input
+            type="file"
+            id="pdfFile"
+            accept=".pdf,application/pdf"
+        >
+
+
+        <button
+            id="uploadButton"
+            onclick="uploadPDF()"
+        >
+
+            Upload PDF
+
+        </button>
+
+
+        <div
+            id="uploadStatus"
+            class="document-status"
+        >
+
+            No document uploaded yet.
+
+        </div>
+
+
+        <div
+            id="uploadLoading"
+            class="loading"
+        >
+
+            Reading the PDF and building the AI search index.
+            This may take a little while for a large document...
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- Question -->
+    <!-- ================================================== -->
+
+    <div class="card">
+
+        <div class="step-title">
+
+            2. Ask a question
+
+        </div>
+
+
+        <textarea
+            id="question"
+            placeholder="Upload a PDF first, then ask a question..."
+        ></textarea>
+
+
+        <button
+            id="askButton"
+            onclick="askQuestion()"
+            disabled
+        >
+
+            Ask
+
+        </button>
+
+
+        <div
+            id="questionLoading"
+            class="loading"
+        >
+
+            Searching the document and generating an answer...
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- Answer -->
+    <!-- ================================================== -->
+
+    <div
+        id="answerBox"
+        class="answer-box"
+        style="display: none;"
+    >
+
+        <h2>
+            Answer
+        </h2>
+
+
+        <div
+            id="answer"
+            class="answer"
+        ></div>
+
+
+        <div
+            id="sources"
+            class="sources"
+        ></div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+// ==========================================================
+// Upload PDF
+// ==========================================================
+
+async function uploadPDF() {
+
+    const fileInput =
+        document.getElementById(
+            "pdfFile"
+        );
+
+    const uploadButton =
+        document.getElementById(
+            "uploadButton"
+        );
+
+    const uploadStatus =
+        document.getElementById(
+            "uploadStatus"
+        );
+
+    const uploadLoading =
+        document.getElementById(
+            "uploadLoading"
+        );
+
+    const askButton =
+        document.getElementById(
+            "askButton"
+        );
+
+
+    const file =
+        fileInput.files[0];
+
+
+    if (!file) {
+
+        alert(
+            "Please select a PDF first."
+        );
+
+        return;
+    }
+
+
+    uploadButton.disabled = true;
+
+    askButton.disabled = true;
+
+    uploadLoading.style.display =
+        "block";
+
+    uploadStatus.textContent =
+        "Processing " +
+        file.name +
+        "...";
+
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "file",
+        file
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "Upload failed."
+            );
+        }
+
+
+        uploadStatus.textContent =
+            "Document ready: " +
+            data.filename;
+
+
+        askButton.disabled =
+            false;
+
+
+        document.getElementById(
+            "question"
+        ).placeholder =
+            "Ask a question about " +
+            data.filename +
+            "...";
+
+
+    } catch (error) {
+
+        uploadStatus.innerHTML =
+            '<span class="error">' +
+            "Error: " +
+            error.message +
+            "</span>";
+
+    } finally {
+
+        uploadButton.disabled =
+            false;
+
+        uploadLoading.style.display =
+            "none";
+
+    }
+
+}
+
+
+// ==========================================================
+// Ask question
+// ==========================================================
+
+async function askQuestion() {
+
+    const questionElement =
+        document.getElementById(
+            "question"
+        );
+
+    const answerBox =
+        document.getElementById(
+            "answerBox"
+        );
+
+    const answerElement =
+        document.getElementById(
+            "answer"
+        );
+
+    const sourcesElement =
+        document.getElementById(
+            "sources"
+        );
+
+    const loadingElement =
+        document.getElementById(
+            "questionLoading"
+        );
+
+    const button =
+        document.getElementById(
+            "askButton"
+        );
+
+
+    const question =
+        questionElement.value.trim();
+
+
+    if (!question) {
+
+        alert(
+            "Please enter a question."
+        );
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+    loadingElement.style.display =
+        "block";
+
+    answerBox.style.display =
+        "none";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/ask",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        question: question
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "Server error."
+            );
+        }
+
+
+        answerElement.textContent =
+            data.answer;
+
+
+        if (
+            data.sources &&
+            data.sources.length > 0
+        ) {
+
+            sourcesElement.textContent =
+                "Source pages: " +
+                data.sources.join(", ");
+
+        } else {
+
+            sourcesElement.textContent =
+                "No source pages found.";
+
+        }
+
+
+        answerBox.style.display =
+            "block";
+
+
+    } catch (error) {
+
+        answerBox.style.display =
+            "block";
+
+        answerElement.innerHTML =
+            '<span class="error">' +
+            "Error: " +
+            error.message +
+            "</span>";
+
+        sourcesElement.textContent =
+            "";
+
+    } finally {
+
+        button.disabled = false;
+
+        loadingElement.style.display =
+            "none";
+
+    }
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
