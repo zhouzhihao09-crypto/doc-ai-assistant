@@ -4,7 +4,11 @@ Doc AI Assistant is a local PDF question-answering prototype. It lets you upload
 
 The project is intended as a practical RAG (retrieval-augmented generation) demonstration, not as a production document-management system.
 
-![Doc AI Assistant workflow demo](docs/doc-ai-assistant-demo.gif)
+## Demo
+
+A short walkthrough showing PDF upload, local RAG processing, document-grounded questions, and source references.
+
+![Doc AI Assistant demo](docs/demo/doc-ai-assistant-demo.gif)
 
 _Demo of the PDF → question → semantic retrieval → answer workflow using safe temporary demo content._
 
@@ -97,7 +101,9 @@ doc_ai_assistant/
 ├── rag_engine.py           Reusable PDF/RAG engine and console mode
 ├── templates/index.html    Web interface and browser JavaScript
 ├── docs/
-│   ├── doc-ai-assistant-demo.gif
+│   ├── demo/
+│   │   ├── doc-ai-assistant-demo.gif
+│   │   └── doc-ai-assistant-demo.mp4
 │   ├── doc-ai-assistant-architecture.svg
 │   └── images/
 │       ├── main-interface.png
