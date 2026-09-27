@@ -64,3 +64,6 @@ Thumbs.db
 
 # Local tool state
 .kilo/
+
+# Nested third-party repositories (not part of this project)
+telecom-log-ingestion-service/
